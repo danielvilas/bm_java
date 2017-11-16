@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch="http://daniel.es/outputgui/data" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://daniel.es/outputgui/data" targetNamespace="http://daniel.es/outputgui/data">
+  <wsdl:types>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://daniel.es/outputgui/data">
+
+
+    <xs:element name="AddPacketRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="packet" type="tns:Packet"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:element name="AddPacketResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="packet" type="tns:Packet"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="GetPacketsRequest">
+        <xs:complexType>
+            <xs:sequence>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="GetPacketsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="packets" type="tns:ListOfPackets"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:element name="DebugPacketsRequest">
+        <xs:complexType>
+            <xs:sequence>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DebugPacketsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="packets" type="tns:ListOfPackets"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+
+    <xs:complexType name="Packet">
+        <xs:sequence>
+            <xs:element name="date" type="xs:dateTime"/>
+            <xs:element name="tvSeconds" type="xs:float"/>
+            <xs:element name="bluraySeconds" type="xs:float"/>
+            <xs:element name="appleTvSeconds" type="xs:float"/>
+            <xs:element name="ipTvSeconds" type="xs:float"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="ListOfPackets">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="packet" type="tns:Packet"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="GetPacketsRequest">
+    <wsdl:part element="tns:GetPacketsRequest" name="GetPacketsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="DebugPacketsRequest">
+    <wsdl:part element="tns:DebugPacketsRequest" name="DebugPacketsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="AddPacketResponse">
+    <wsdl:part element="tns:AddPacketResponse" name="AddPacketResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="AddPacketRequest">
+    <wsdl:part element="tns:AddPacketRequest" name="AddPacketRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="DebugPacketsResponse">
+    <wsdl:part element="tns:DebugPacketsResponse" name="DebugPacketsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetPacketsResponse">
+    <wsdl:part element="tns:GetPacketsResponse" name="GetPacketsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="AppliancesPort">
+    <wsdl:operation name="GetPackets">
+      <wsdl:input message="tns:GetPacketsRequest" name="GetPacketsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:GetPacketsResponse" name="GetPacketsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DebugPackets">
+      <wsdl:input message="tns:DebugPacketsRequest" name="DebugPacketsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:DebugPacketsResponse" name="DebugPacketsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddPacket">
+      <wsdl:input message="tns:AddPacketRequest" name="AddPacketRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:AddPacketResponse" name="AddPacketResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="AppliancesPortSoap11" type="tns:AppliancesPort">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GetPackets">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="GetPacketsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetPacketsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DebugPackets">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="DebugPacketsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="DebugPacketsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddPacket">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="AddPacketRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="AddPacketResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="AppliancesPortService">
+    <wsdl:port binding="tns:AppliancesPortSoap11" name="AppliancesPortSoap11">
+      <soap:address location="http://localhost:8080/ws"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

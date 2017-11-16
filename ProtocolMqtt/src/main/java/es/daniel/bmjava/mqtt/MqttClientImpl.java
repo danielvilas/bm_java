@@ -1,6 +1,9 @@
 package es.daniel.bmjava.mqtt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import es.daniel.bmjava.basic.BasicProcess;
+import es.daniel.bmjava.common.CmdParser;
+import es.daniel.bmjava.common.MainApp;
 import es.daniel.bmjava.common.data.Config;
 import es.daniel.bmjava.common.data.ParsedPacket;
 import es.daniel.bmjava.common.iface.Client;
@@ -65,5 +68,15 @@ public class MqttClientImpl implements Client {
         }
 
         return 0;
+    }
+
+
+    public static void main(String args[]){
+        CmdParser cmd = new CmdParser(args);
+        Config cfg = cmd.parseConfig();
+        Client client = new MqttClientImpl();
+
+        MainApp app = new MainApp(client, cfg, new BasicProcess());
+        app.run();
     }
 }

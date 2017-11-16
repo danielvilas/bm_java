@@ -13,6 +13,9 @@
         <module>ProtocolMqtt</module>
         <module>fannjWin64</module>
         <module>ProcessBasic</module>
+        <module>ProtocolKafka</module>
+        <module>ProtocolRest</module>
+        <module>ProtocolSoap</module>
     </modules>
     <packaging>pom</packaging>
 
