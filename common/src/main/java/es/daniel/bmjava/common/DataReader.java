@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 public class DataReader implements Runnable {
     DataReaderCallback cb;
@@ -20,7 +21,9 @@ public class DataReader implements Runnable {
 
     public void run() {
         File dir = new File("./data/sets/"+cfg.getDataset());
-        for(File file:dir.listFiles()){
+        File[] files = dir.listFiles();
+        Arrays.sort(files);
+        for(File file:files){
             System.out.println(file.getName());
             try{
                 processFile(file);
