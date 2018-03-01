@@ -22,6 +22,7 @@ import java.util.GregorianCalendar;
 public class SoapClientImpl extends WebServiceGatewaySupport implements Client {
 
     String address;
+    int sentMessages=0;
 
     public SoapClientImpl(){
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
@@ -54,7 +55,7 @@ public class SoapClientImpl extends WebServiceGatewaySupport implements Client {
         Packet packet = fromParsedPacket(data);
         AddPacketRequest req = new AddPacketRequest();
         req.setPacket(packet);
-
+        sentMessages++;
         AddPacketResponse res = (AddPacketResponse) getWebServiceTemplate().marshalSendAndReceive(address,                req, new SoapActionCallback(""));
         //client.addBucket(req);
         return 0;
@@ -83,6 +84,7 @@ public class SoapClientImpl extends WebServiceGatewaySupport implements Client {
     }
 
     public int close() {
+        System.out.println("Messages: "+this.sentMessages);
         return 0;
     }
 

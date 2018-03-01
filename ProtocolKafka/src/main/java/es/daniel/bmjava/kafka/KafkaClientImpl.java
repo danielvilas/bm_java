@@ -21,6 +21,8 @@ public class KafkaClientImpl implements Client {
 
     private Producer<String, String> producer;
     private ZooKeeper zk;
+    private int sentMessages=0;
+    private int pendingMessages=0;
 
     public KafkaClientImpl(){
 
@@ -98,11 +100,21 @@ public class KafkaClientImpl implements Client {
             String data= om.writeValueAsString(p);
 
             ProducerRecord<String, String> record = new ProducerRecord<String, String>("AppliancesBucket", data);
+            synchronized (producer) {
+                pendingMessages++;
+                sentMessages++;
+            }
             producer.send(record, new Callback() {
                 public void onCompletion(RecordMetadata recordMetadata, Exception e) {
-                    System.out.println("Sent, " + recordMetadata);
+                    //System.out.println("Sent, " + recordMetadata);
+                    synchronized (producer) {
+                        pendingMessages--;
+                        producer.notify();
+                    }
                 }
             });
+
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -123,6 +135,23 @@ public class KafkaClientImpl implements Client {
 
 
     public int close() {
+        boolean wait;
+        synchronized (producer) {
+            wait = pendingMessages > 0;
+            while (wait) {
+                System.out.println("Pending Messages: " + this.pendingMessages);
+                try {
+                    producer.wait(100);
+                } catch (InterruptedException e) {
+                    wait = false;
+                }
+                if (wait) {
+                    wait = pendingMessages > 0;
+
+                }
+            }
+        }
+        System.out.println("Messages: "+this.sentMessages);
         try {
             zk.close();
             producer.close();

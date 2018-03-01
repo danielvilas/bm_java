@@ -10,11 +10,15 @@ public class PacketReader implements DataReaderCallback {
     private PacketReaderCallback cb;
     int i=-1;
     LogPacket lp;
+    int samples=0;
+    int packets=0;
+
     public PacketReader(PacketReaderCallback cb) {
         this.cb = cb;
     }
 
     public void pushLogDataRead(LogData data) {
+        this.samples++;
         if(lp==null){
             lp = new LogPacket();
             i=0;
@@ -24,6 +28,12 @@ public class PacketReader implements DataReaderCallback {
             if(cb!=null)
                 cb.pushLogPacket(lp);
             lp=null;
+            packets++;
         }
+    }
+
+    public void finish(){
+        System.out.println("Samples: "+this.samples);
+        System.out.println("Packets: "+this.packets);
     }
 }

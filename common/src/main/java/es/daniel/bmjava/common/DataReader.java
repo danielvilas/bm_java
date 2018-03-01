@@ -13,10 +13,13 @@ import java.util.Arrays;
 public class DataReader implements Runnable {
     DataReaderCallback cb;
     Config cfg;
+    int files;
+    int samples;
 
     public DataReader(DataReaderCallback cb, Config cfg) {
         this.cb = cb;
         this.cfg=cfg;
+        this.files=0;
     }
 
     public void run() {
@@ -34,6 +37,7 @@ public class DataReader implements Runnable {
     }
 
     private void processFile(File f) throws Exception{
+        files++;
         FileInputStream fis =new FileInputStream(f);
         InputStreamReader isr =new InputStreamReader(fis,"UTF-8");
         BufferedReader br = new BufferedReader(isr);
@@ -58,5 +62,10 @@ public class DataReader implements Runnable {
                 cb.pushLogDataRead(log);
             }
         }
+
+    }
+
+    public void finish(){
+        System.out.println("Files: "+this.files);
     }
 }

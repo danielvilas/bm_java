@@ -10,6 +10,8 @@ import org.springframework.web.client.RestTemplate;
 
 public class RestClientImpl implements Client {
     String address;
+
+    int sentMessages=0;
     public RestClientImpl(){
 
     }
@@ -37,8 +39,10 @@ public class RestClientImpl implements Client {
 
     public int send(ParsedPacket p) {
         try {
+            sentMessages++;
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.postForLocation(address,fromParsedPacket(p));
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -56,6 +60,7 @@ public class RestClientImpl implements Client {
     }
 
     public int close() {
+        System.out.println("Messages: "+this.sentMessages);
         return 0;
     }
 

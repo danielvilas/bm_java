@@ -7,12 +7,15 @@ import es.daniel.bmjava.common.MainApp;
 import es.daniel.bmjava.common.data.Config;
 import es.daniel.bmjava.common.data.ParsedPacket;
 import es.daniel.bmjava.common.iface.Client;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class MqttClientImpl implements Client {
+public class MqttClientImpl implements Client, MqttCallback {
     MqttClient client;
-
+    private int sentMessages=0;
+    private int pendingMessages=0;
 
     public MqttClientImpl(){}
 
@@ -34,6 +37,7 @@ public class MqttClientImpl implements Client {
         System.out.println("Connecting to: "+addr);
         try {
             client = new MqttClient(addr, MqttClient.generateClientId());
+            client.setCallback(this);
             client.connect();
 
         }catch (Exception e){
@@ -48,6 +52,10 @@ public class MqttClientImpl implements Client {
             String str= om.writeValueAsString(data);
             MqttMessage message = new MqttMessage();
             message.setPayload(str.getBytes());
+            synchronized (client){
+                this.sentMessages++;
+                this.pendingMessages++;
+            }
             client.publish("AppliancesBucket", message);
         }catch (Exception e){
             e.printStackTrace();
@@ -58,6 +66,25 @@ public class MqttClientImpl implements Client {
     }
 
     public int close() {
+        boolean wait;
+        synchronized (client){
+            wait=pendingMessages>0;
+            while(wait){
+                System.out.println("Pending Messages: "+this.pendingMessages);
+                try {
+                    client.wait(100);
+                }catch (InterruptedException e){
+                    wait = false;
+                }
+                if(wait) {
+
+                    wait = pendingMessages > 0;
+                }
+            }
+        }
+
+        System.out.println("Messages: "+this.sentMessages);
+
         try {
             if(client!=null && client.isConnected()){
                 client.disconnect();
@@ -78,5 +105,19 @@ public class MqttClientImpl implements Client {
 
         MainApp app = new MainApp(client, cfg, new BasicProcess());
         app.run();
+    }
+
+    public void connectionLost(Throwable throwable) {
+
+    }
+
+    public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
+
+    }
+
+    public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+        synchronized (client){
+            this.pendingMessages--;
+        }
     }
 }

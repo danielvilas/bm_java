@@ -5,6 +5,8 @@ import es.daniel.bmjava.common.data.Config;
 import es.daniel.bmjava.common.iface.Client;
 import es.daniel.bmjava.common.iface.Processor;
 
+import java.util.Date;
+
 public class MainApp implements Runnable {
     Client client;
     Config cfg;
@@ -16,6 +18,7 @@ public class MainApp implements Runnable {
     }
 
     public void run() {
+        long start = System.currentTimeMillis();
         client.init(cfg);
 
         processor.setAnnNetwork(new Fann("./data/net_16000.net"));
@@ -25,6 +28,11 @@ public class MainApp implements Runnable {
         DataReader dr = new DataReader(packetReader,cfg);
         dr.run();
 
+        System.out.println("I'm done!!");
+        dr.finish();
+        packetReader.finish();
         client.close();
+        long end = System.currentTimeMillis();
+        System.out.println("Total time: "+(end-start)+" ms");
     }
 }
